@@ -62,7 +62,7 @@ public class SentimentAnalysis {
                 .setOutputCol("filtered");
         MyStemmer stemmer = new MyStemmer().setInputCol("filtered").setOutputCol("stemmed").setLanguage("English");//new Stemmer().setInputCol("filtered").setOutputCol("stemmed").setLanguage("English");
         CountVectorizer cv = new CountVectorizer()
-                .setInputCol("stemmed")
+                .setInputCol("filtered")
                 .setOutputCol("rawFeatures");
                 //.setVocabSize(5)
         HashingTF hashingTF = new HashingTF()
