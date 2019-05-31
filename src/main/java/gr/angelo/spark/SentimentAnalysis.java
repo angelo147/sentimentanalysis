@@ -71,7 +71,7 @@ public class SentimentAnalysis {
         IDF idf = new IDF().setInputCol("rawFeatures").setOutputCol("features");
 
         Pipeline pipeline = new Pipeline()
-                .setStages(new PipelineStage[] {tokenizer, indexer, remover, stemmer, cv, idf});
+                .setStages(new PipelineStage[] {tokenizer, indexer, remover, cv, idf});
 
         PipelineModel model = pipeline.fit(dataFrame);
         Dataset<Row> rescaledData = model.transform(dataFrame);
@@ -107,15 +107,3 @@ public class SentimentAnalysis {
         spark.stop();
     }
 }
-    /*ParamMap[] paramGrid = new ParamGridBuilder()
-            .addGrid(lsvc.regParam(), new double[] {0.1, 0.01})
-            .addGrid(lsvc.maxIter(), new int[] {5, 10})
-            .build();
-    TrainValidationSplit trainValidationSplit = new TrainValidationSplit()
-            .setEstimator(lsvc)
-            .setEvaluator(new BinaryClassificationEvaluator())
-            .setEstimatorParamMaps(paramGrid)
-            .setTrainRatio(0.8)
-            .setParallelism(1);
-    TrainValidationSplitModel modell = trainValidationSplit.fit(train);
-    Dataset<Row> predictionss = modell.transform(test);*/
