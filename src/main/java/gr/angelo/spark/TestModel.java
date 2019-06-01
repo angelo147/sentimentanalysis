@@ -20,14 +20,15 @@ import java.util.List;
 
 public class TestModel {
     public static void main(String[] args) {
-        System.setProperty("hadoop.home.dir", "C:\\hadoop");
+        Configs configs = new Configs();
+        System.setProperty("hadoop.home.dir", configs.getHadoopPath());
         SparkSession spark = SparkSession
                 .builder()
                 .appName("JavaTfIdfExample")
                 .config("spark.master", "local")
                 .getOrCreate();
 
-        List<Row> data = Arrays.asList(RowFactory.create(55, "", "Absolute perfection end game !! Good acting performance to all the characters. Great cgi's. Truly epic & perfect ending to a long journey of marvel movie. Go see it you wont regret it !! Perfection Marvel Endgame !!", "neg", "file44.txt"));
+        List<Row> data = Arrays.asList(RowFactory.create(55, "", configs.getReviewText(), configs.getReviewResult(), "file44.txt"));
 
         StructType schema = new StructType(new StructField[]{
                 new StructField("id", DataTypes.IntegerType, false, Metadata.empty()),
@@ -37,10 +38,10 @@ public class TestModel {
                 new StructField("file", DataTypes.StringType, false, Metadata.empty())
         });
         Dataset<Row> sentenceData = spark.createDataFrame(data, schema);
-        PipelineModel model2 = PipelineModel.load("file:///C:/Users/Aggelos/Desktop/projects/pipemodel");
+        PipelineModel model2 = PipelineModel.load("file:///"+configs.getPipepath());
         Dataset<Row> mytest = model2.transform(sentenceData);
 
-        LinearSVCModel lsvcModel = LinearSVCModel.load("file:///C:/Users/Aggelos/Desktop/projects/model");
+        LinearSVCModel lsvcModel = LinearSVCModel.load("file:///"+configs.getModelpath());
 
         Dataset<Row> predictions = lsvcModel.transform(mytest);
         predictions.show();

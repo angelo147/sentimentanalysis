@@ -29,7 +29,8 @@ import static org.apache.spark.sql.functions.col;
 
 public class SentimentAnalysis {
     public static void main(String[] args) {
-        System.setProperty("hadoop.home.dir","C:\\hadoop" );
+        Configs configs = new Configs();
+        System.setProperty("hadoop.home.dir", configs.getHadoopPath());
         SparkSession spark = SparkSession
                 .builder()
                 .appName("JavaTfIdfExample")
@@ -49,7 +50,7 @@ public class SentimentAnalysis {
         );
 
         Dataset<Row> dataFrame =
-                spark.read().format("csv").schema(schema).option("header", "true").load("C:\\Users\\Aggelos\\Desktop\\projects\\sentimentanalysis\\imdb_master.csv").filter(col("result").as("String").equalTo("neg").or(col("result").as("String").equalTo("pos")))
+                spark.read().format("csv").schema(schema).option("header", "true").load(configs.getCsvpath()).filter(col("result").as("String").equalTo("neg").or(col("result").as("String").equalTo("pos")))
                         .withColumn("sentence", cleanUDF.apply(col("sentence")));
                         //.withColumn("label",when(col("result").as("String").equalTo("neg"), 0).otherwise(1));
 
@@ -88,8 +89,8 @@ public class SentimentAnalysis {
                 .setRegParam(0.1);
         LinearSVCModel lsvcModel = lsvc.fit(train);
         try {
-            model.write().overwrite().save("file:///C:/Users/Aggelos/Desktop/projects/pipemodel");
-            lsvcModel.write().overwrite().save("file:///C:/Users/Aggelos/Desktop/projects/model");
+            model.write().overwrite().save("file:///"+configs.getPipepath());
+            lsvcModel.write().overwrite().save("file:///"+configs.getModelpath());
         } catch (IOException e) {
             e.printStackTrace();
         }
